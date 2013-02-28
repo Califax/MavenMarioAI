@@ -50,47 +50,6 @@ public class MyLevel extends Level {
 			}
 		}
 
-		// create all of the medium sections
-		//		while (length < width - 64) {
-		//			length += buildStraight(length, width - length, false);
-		//        	length += buildZone(length, width - length);
-		//			length += buildStraight(length, width - length, false);
-		//			length += buildHillStraight(length, width - length);
-		//			length += buildJump(length, width - length);
-		//			length += buildTubes(length, width - length);
-		//			length += buildCannons(length, width - length);
-		//		}
-
-		// set the end piece
-//		int floor = height - 1 - random.nextInt(4);
-//		xExit = x + 8;
-//		yExit = floor;
-//
-//		// fills the end piece
-//		for (int i = x; i < width; i++) {
-//			for (int y = 0; y < height; y++) {
-//				if (y >= floor) {
-//					setBlock(i, y, GROUND);
-//				}
-//			}
-//		}
-//
-//		if (type == LevelInterface.TYPE_CASTLE
-//				|| type == LevelInterface.TYPE_UNDERGROUND) {
-//			int ceiling = 0;
-//			int run = 0;
-//			for (int i = 0; i < width; i++) {
-//				if (run-- <= 0 && i > 4) {
-//					ceiling = random.nextInt(4);
-//					run = random.nextInt(4) + 4;
-//				}
-//				for (int y = 0; y < height; y++) {
-//					if ((i > 4 && y <= ceiling) || i < 1) {
-//						setBlock(i, y, GROUND);
-//					}
-//				}
-//			}
-//		}
 		
 		/*
 		 * coordinates of the exit
