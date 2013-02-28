@@ -85,4 +85,53 @@ public class GamePlay implements Serializable {
 		}
 		return gp;
 	}
+
+	@Override
+	public String toString() {
+		return "GamePlay [completionTime=" + completionTime + ", totalTime="
+				+ totalTime + ", jumpsNumber=" + jumpsNumber + ", duckNumber="
+				+ duckNumber + ", timeSpentDucking=" + timeSpentDucking
+				+ ", timesPressedRun=" + timesPressedRun
+				+ ", timeSpentRunning=" + timeSpentRunning
+				+ ", timeRunningRight=" + timeRunningRight
+				+ ", timeRunningLeft=" + timeRunningLeft
+				+ ", emptyBlocksDestroyed=" + emptyBlocksDestroyed
+				+ ", coinsCollected=" + coinsCollected
+				+ ", coinBlocksDestroyed=" + coinBlocksDestroyed
+				+ ", powerBlocksDestroyed=" + powerBlocksDestroyed
+				+ ", kickedShells=" + kickedShells + ", enemyKillByFire="
+				+ enemyKillByFire + ", enemyKillByKickingShell="
+				+ enemyKillByKickingShell + ", totalTimeLittleMode="
+				+ totalTimeLittleMode + ", totalTimeLargeMode="
+				+ totalTimeLargeMode + ", totalTimeFireMode="
+				+ totalTimeFireMode + ", timesSwichingPower="
+				+ timesSwichingPower + ", aimlessJumps=" + aimlessJumps
+				+ ", percentageBlocksDestroyed=" + percentageBlocksDestroyed
+				+ ", percentageCoinBlocksDestroyed="
+				+ percentageCoinBlocksDestroyed
+				+ ", percentageEmptyBlockesDestroyed="
+				+ percentageEmptyBlockesDestroyed
+				+ ", percentagePowerBlockDestroyed="
+				+ percentagePowerBlockDestroyed
+				+ ", timesOfDeathByFallingIntoGap="
+				+ timesOfDeathByFallingIntoGap + ", totalEnemies="
+				+ totalEnemies + ", totalEmptyBlocks=" + totalEmptyBlocks
+				+ ", totalCoinBlocks=" + totalCoinBlocks
+				+ ", totalpowerBlocks=" + totalpowerBlocks + ", totalCoins="
+				+ totalCoins + ", timesOfDeathByRedTurtle="
+				+ timesOfDeathByRedTurtle + ", timesOfDeathByGoomba="
+				+ timesOfDeathByGoomba + ", timesOfDeathByGreenTurtle="
+				+ timesOfDeathByGreenTurtle + ", timesOfDeathByArmoredTurtle="
+				+ timesOfDeathByArmoredTurtle + ", timesOfDeathByJumpFlower="
+				+ timesOfDeathByJumpFlower + ", timesOfDeathByCannonBall="
+				+ timesOfDeathByCannonBall + ", timesOfDeathByChompFlower="
+				+ timesOfDeathByChompFlower + ", RedTurtlesKilled="
+				+ RedTurtlesKilled + ", GreenTurtlesKilled="
+				+ GreenTurtlesKilled + ", ArmoredTurtlesKilled="
+				+ ArmoredTurtlesKilled + ", GoombasKilled=" + GoombasKilled
+				+ ", CannonBallKilled=" + CannonBallKilled
+				+ ", JumpFlowersKilled=" + JumpFlowersKilled
+				+ ", ChompFlowersKilled=" + ChompFlowersKilled + "]";
+	}
+	
 }
