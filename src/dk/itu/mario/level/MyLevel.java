@@ -18,7 +18,7 @@ public class MyLevel extends Level {
 	public static int BLOCKS_COINS = 0;
 	public static int COINS = 0;
 	public static int ENEMIES = 0;
-	
+
 	// Store information about the level
 	private Random random;
 	private int difficulty;
@@ -28,8 +28,8 @@ public class MyLevel extends Level {
 	// Configurations
 	private Map<Configuration, Integer> configMap;
 	private List<Configuration> configs;
-	
-	
+
+
 	public MyLevel(int width, int height) {
 		super(width, height);
 	}
@@ -47,16 +47,16 @@ public class MyLevel extends Level {
 		this.random = new Random(seed);
 		this.configMap = getConfigurations();
 		this.configs = new ArrayList<>(this.configMap.keySet());
-		
+
 	}
 
 	public void create() {
 		// create the start location
 		Point at = new Point(0, 2);
-		
+
 		// width we want to leave safe at the end and beginning
 		int cushion = 10;
-		
+
 		at = straight(at, cushion);
 		while(at.x < width - cushion) {
 			int config = random.nextInt(configs.size());
@@ -84,7 +84,7 @@ public class MyLevel extends Level {
 		at.x += l;
 		return at;
 	}
-	
+
 	/**
 	 * Creates a jump of the specified length at the given point
 	 * @param at the current point location we are looking at on the map
@@ -114,12 +114,12 @@ public class MyLevel extends Level {
 				setBlock(at.x + 1, y(at.y + i), TUBE_SIDE_RIGHT);
 			}
 		}
-		
+
 		if (flower) {
 			setSpriteTemplate(at.x, y(at.y + h - 1), new SpriteTemplate(Enemy.ENEMY_FLOWER, false));
 		}
 	}
-	
+
 	/**
 	 * Builds a cannon of the specified height at the point
 	 */
@@ -145,14 +145,14 @@ public class MyLevel extends Level {
 	private void enemy(Point at, int type, boolean winged) {
 		setSpriteTemplate(at.x, y(at.y), new SpriteTemplate(type, winged));
 	}
-	
+
 	/**
 	 * 
 	 * @param at
 	 * @param h the height to place the block at
 	 * @param type
 	 */
-	private void createBlock(Point at, int h, byte type) {
+	private void block(Point at, int h, byte type) {
 		setBlock(at.x, y(at.y+h), type);
 	}
 
@@ -166,11 +166,11 @@ public class MyLevel extends Level {
 	private int y(int h) {
 		return height - 1 - h;
 	}
-	
+
 	/*
 	 * Their code...
 	 */
-	
+
 	private void fixWalls() {
 		boolean[][] blockMap = new boolean[width + 1][height + 1];
 
@@ -282,9 +282,9 @@ public class MyLevel extends Level {
 			}
 		}
 	}
-	   
+
 	public MyLevel clone() throws CloneNotSupportedException {
-	//	//System.out.println("Called clone");
+		//	//System.out.println("Called clone");
 		//System.out.println(playerMetrics);
 		MyLevel clone = new MyLevel(width, height);
 
@@ -302,54 +302,89 @@ public class MyLevel extends Level {
 		return clone;
 
 	}
-	
+
 	/*
 	 * Configurations
 	 */
-	
+
 	private Map<Configuration, Integer> getConfigurations() {
 		Map<Configuration, Integer> configurations = new HashMap<>();
-		
+
 		configurations.put(new Configuration() {
 			@Override
 			public String id() {
 				return "straight";
 			}
-			
+
 			@Override
 			public Point apply(Point at) {
 				int w = random.nextInt(5) + 2;
 				return straight(at, w);
 			}
 		}, 1);
-		
+
 		configurations.put(new Configuration() {
 			@Override
 			public String id() {
 				return "gap";
 			}
-			
+
 			@Override
 			public Point apply(Point at) {
 				at = jump(at, 3, 0);
 				return straight(at, 2);
 			}
 		}, 1);
-		
+
 		configurations.put(new Configuration() {
 			@Override
 			public String id() {
 				return "jump";
 			}
-			
+
 			@Override
 			public Point apply(Point at) {
 				int h = random.nextInt(7) - 3;
 				while (at.y + h >= height || at.y + h <= 0) {
 					h = random.nextInt(7) - 3;
 				}
-				
+
 				at = jump(at, 3, h);
+				return straight(at, 2);
+			}
+		}, 1);
+
+		configurations.put(new Configuration() {
+			@Override
+			public String id() {
+				return "goomba";
+			}
+
+			@Override
+			public Point apply(Point at) {
+				at = straight(at, 2);
+				enemy(at, Enemy.ENEMY_GOOMBA, false);
+				return straight(at, 2);
+			}
+		}, 1);
+
+		configurations.put(new Configuration() {
+			@Override
+			public String id() {
+				return "coins";
+			}
+
+			@Override
+			public Point apply(Point at) {
+				at = straight(at, 1);
+				int w = random.nextInt(6) + 1;
+				int h = random.nextInt(2) + 2;
+				if (at.y + h < height) {
+					for (int i = 0; i < w; i++) {
+						block(at, h, BLOCK_COIN);
+						at = straight(at, 1);
+					}
+				}
 				return straight(at, 2);
 			}
 		}, 1);
@@ -357,35 +392,80 @@ public class MyLevel extends Level {
 		configurations.put(new Configuration() {
 			@Override
 			public String id() {
-				return "goomba";
+				return "random pipe";
 			}
-			
+
 			@Override
 			public Point apply(Point at) {
-				at = straight(at, 4);
-				enemy(at, Enemy.ENEMY_GOOMBA, false);
-				return straight(at, 1);
+				at = straight(at, 1);
+				int h = random.nextInt(2) + 2;
+				pipe(at, h, random.nextBoolean());
+				return straight(at, 3);
 			}
 		}, 1);
 		
+		
+		configurations.put(new Configuration() {
+			@Override
+			public String id() {
+				return "cannon";
+			}
+
+			@Override
+			public Point apply(Point at) {
+				at = straight(at, 1);
+				int h = random.nextInt(2) + 2;
+				cannon(at, h);
+				return straight(at, 2);
+			}
+		}, 1);
+		
+		configurations.put(new Configuration() {
+			@Override
+			public String id() {
+				return "random blocks";
+			}
+
+			@Override
+			public Point apply(Point at) {
+				at = straight(at, 1);
+				int w = random.nextInt(6) + 1;
+				int h = random.nextInt(2) + 2;
+				if (at.y + h < height) {
+					for (int i = 0; i < w; i++) {
+						int r = random.nextInt(10);
+						if (r < 7) {
+							block(at, h, BLOCK_COIN);
+						} else if (r < 9) {
+							block(at, h, BLOCK_EMPTY);
+						} else {
+							block(at, h, BLOCK_POWERUP);
+						}
+						at = straight(at, 1);
+					}
+				}
+				return straight(at, 2);
+			}
+		}, 1);
+
 		return configurations;
 	}
-	
+
 	private abstract class Configuration {
-		
+
 		abstract String id();
 		abstract Point apply(Point at);
-		
+
 		@Override
 		public int hashCode() {
 			return id().hashCode();
 		}
-		
+
 		@Override
 		public boolean equals(Object obj) {
 			return id().equals(obj);
 		}
-		
+
 		@Override
 		public String toString() {
 			return id();
