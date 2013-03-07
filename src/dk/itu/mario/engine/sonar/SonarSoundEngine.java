@@ -48,7 +48,7 @@ public class SonarSoundEngine implements Runnable
         }
         catch (IllegalArgumentException e)
         {
-            System.out.println("Failed to set the sound volume");
+            //System.out.println("Failed to set the sound volume");
         }
 
         listenerMixer = new ListenerMixer(maxChannels);
@@ -80,7 +80,7 @@ public class SonarSoundEngine implements Runnable
         }
         catch (Exception e)
         {
-            System.out.println("Failed to load sample " + resourceName + ". Using silent sample");
+            //System.out.println("Failed to load sample " + resourceName + ". Using silent sample");
             e.printStackTrace();
             return silentSample;
         }

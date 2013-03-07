@@ -306,7 +306,7 @@ public class DataRecorder {
 
 			startDuckTime = 2982 - levelScene.timeLeft;
 
-			System.out.println("START DUCK");
+			//System.out.println("START DUCK");
 		}
 	}
 
@@ -316,9 +316,9 @@ public class DataRecorder {
 
 			totalDuckTime += endDuckTime - startDuckTime;
 
-			System.out.println("END DUCK");
+			//System.out.println("END DUCK");
 			
-			System.out.println("END DUCK");
+			//System.out.println("END DUCK");
 			
 			detailedLog += "Duck: StTime = "+startDuckTime +" EdTime = "+endDuckTime;
 			detailedLog += "\n";
@@ -336,11 +336,11 @@ public class DataRecorder {
 
 			//switchedPower++;
 
-			System.out.println("------------------- "+switchedPower+" -------------------");
+			//System.out.println("------------------- "+switchedPower+" -------------------");
 
 			startLittleTime = 2982 - levelScene.timeLeft;
 
-			System.out.println("LITTLE START: " + startLittleTime);
+			//System.out.println("LITTLE START: " + startLittleTime);
 		}
 	}
 
@@ -351,9 +351,9 @@ public class DataRecorder {
 
 			totalLittleTime += endLittleTime - startLittleTime;
 
-			System.out.println("LITTLE END: "+endLittleTime);
-			System.out.println("TOTAL LITTLE END: " + totalLittleTime);
-			System.out.println("LITTLE END: "+endLittleTime);
+			//System.out.println("LITTLE END: "+endLittleTime);
+			//System.out.println("TOTAL LITTLE END: " + totalLittleTime);
+			//System.out.println("LITTLE END: "+endLittleTime);
 			detailedLog += "LittleState: StTime = "+startLittleTime +" EdTime = "+endLittleTime;
 			detailedLog += "\n";
 		}
@@ -362,11 +362,11 @@ public class DataRecorder {
 	public void startLargeRecord(){
 		switchedPower++;
 
-		System.out.println("------------------- "+switchedPower+" -------------------");
+		//System.out.println("------------------- "+switchedPower+" -------------------");
 
 		startLargeTime = 2982 - levelScene.timeLeft;
 
-		System.out.println("LARGE START");
+		//System.out.println("LARGE START");
 	}
 
 	public void endLargeRecord(){
@@ -374,7 +374,7 @@ public class DataRecorder {
 
 		totalLargeTime += endLargeTime - startLargeTime;
 
-		System.out.println("LARGE END");
+		//System.out.println("LARGE END");
 		
 		detailedLog += "LargeState: StTime = "+startLargeTime +" EdTime = "+endLargeTime;
 		detailedLog += "\n";
@@ -385,11 +385,11 @@ public class DataRecorder {
 	public void startFireRecord(){
 		switchedPower++;
 
-		System.out.println("------------------- "+switchedPower+" -------------------");
+		//System.out.println("------------------- "+switchedPower+" -------------------");
 
 		startFireTime = 2982 - levelScene.timeLeft;
 
-		System.out.println("FIRE START");
+		//System.out.println("FIRE START");
 	}
 
 	public void endFireRecord(){
@@ -397,7 +397,7 @@ public class DataRecorder {
 
 		totalFireTime += endFireTime - startFireTime;
 
-		System.out.println("FIRE END");
+		//System.out.println("FIRE END");
 		detailedLog += "FireState: StTime = "+startFireTime +" EdTime = "+endFireTime;
 		detailedLog += "\n";
 	}
@@ -408,14 +408,14 @@ public class DataRecorder {
 
 			startRunTime = 2982 - levelScene.timeLeft;
 
-			System.out.println("START RUN");
+			//System.out.println("START RUN");
 		}
 	}
 
 	public void endRunningRecord(){
 		if(levelScene.mario.running){
 
-			System.out.println("END RUN");
+			//System.out.println("END RUN");
 
 			endRunTime = 2982 - levelScene.timeLeft;
 
@@ -444,7 +444,7 @@ public class DataRecorder {
 			detailedLog += "\n";	
 		}
 		fireKills++;
-		System.out.println(" fire kill ");
+		//System.out.println(" fire kill ");
 	}
 
 	public void shellKillRecord(Sprite sprite){
@@ -466,13 +466,13 @@ public class DataRecorder {
 		}
 		
 		shellKills++;
-		System.out.println(" shell kill ");
+		//System.out.println(" shell kill ");
 	}
 
 	public void killSuicideRecord(Sprite sprite){
 		killRecord(sprite);
 		suicideKills++;
-		System.out.println(" suicide ");
+		//System.out.println(" suicide ");
 	}
 
 	public void killStompRecord(Sprite sprite){
@@ -496,7 +496,7 @@ public class DataRecorder {
 			
 		}
 		stompKills++;
-		System.out.println(" stomp ");
+		//System.out.println(" stomp ");
 	}
 
 	public void killRecord(Sprite sprite){
@@ -581,7 +581,7 @@ public class DataRecorder {
 
 	public void shellUnleashedRecord(){
 		shellsUnleashed++;
-		System.out.println(" shell unleased");
+		//System.out.println(" shell unleased");
 		detailedLog += "UnleashShell:  time = "+ (2982 - levelScene.timeLeft);
 		detailedLog += "\n";
 	}
@@ -633,43 +633,43 @@ public class DataRecorder {
 		printRun();
 		printSwitching();
 
-		System.out.println("total fire: " + convertTime( totalFireTime) + " total large: " + convertTime(totalLargeTime) + " total little: " + convertTime(totalLittleTime));
+		//System.out.println("total fire: " + convertTime( totalFireTime) + " total large: " + convertTime(totalLargeTime) + " total little: " + convertTime(totalLittleTime));
 	}
 
 	private void printSwitching(){
 		printStart("Switch Variables");
-		System.out.println("Time Spent Moving Right: " + convertTime(totalRightTime) + " ("+Math.round((double)convertTime(totalRightTime)/(double)convertTime(totalTime)*(double)100)+"%)");
-		System.out.println("Time Spent Moving Left: " + convertTime(totalLeftTime) + " ("+Math.round((double)convertTime(totalLeftTime)/(double)convertTime(totalTime)*(double)100)+"%)");
-		System.out.println("Time Spent Standing Still: " + (convertTime(totalTime)-convertTime(totalLeftTime)-convertTime(totalRightTime)) + " ("+Math.round((double)(convertTime(totalTime)-convertTime(totalLeftTime)-convertTime(totalRightTime))/(double)convertTime(totalTime)*(double)100)+"%)");
+		//System.out.println("Time Spent Moving Right: " + convertTime(totalRightTime) + " ("+Math.round((double)convertTime(totalRightTime)/(double)convertTime(totalTime)*(double)100)+"%)");
+		//System.out.println("Time Spent Moving Left: " + convertTime(totalLeftTime) + " ("+Math.round((double)convertTime(totalLeftTime)/(double)convertTime(totalTime)*(double)100)+"%)");
+		//System.out.println("Time Spent Standing Still: " + (convertTime(totalTime)-convertTime(totalLeftTime)-convertTime(totalRightTime)) + " ("+Math.round((double)(convertTime(totalTime)-convertTime(totalLeftTime)-convertTime(totalRightTime))/(double)convertTime(totalTime)*(double)100)+"%)");
 
 		printEnd();
 	}
 
 	private void printJump(){
 		printStart("Jump Variables");
-		System.out.println("Number of Times Jumped: " + timesJumped);
-		System.out.println("Time Spent Jumping: " + convertTime(totalJumpTime) + " ("+Math.round((double)convertTime(totalJumpTime)/(double)convertTime(totalTime)*(double)100)+"%)");
+		//System.out.println("Number of Times Jumped: " + timesJumped);
+		//System.out.println("Time Spent Jumping: " + convertTime(totalJumpTime) + " ("+Math.round((double)convertTime(totalJumpTime)/(double)convertTime(totalTime)*(double)100)+"%)");
 		printEnd();
 	}
 
 	private void printRun(){
 		printStart("Run Variables");
-		System.out.println("Number of Times Run: " + timesRun);
-		System.out.println("Time Spent Running: " + convertTime(totalRunTime) + " ("+Math.round((double)convertTime(totalRunTime)/(double)convertTime(totalTime)*100)+"%)");
+		//System.out.println("Number of Times Run: " + timesRun);
+		//System.out.println("Time Spent Running: " + convertTime(totalRunTime) + " ("+Math.round((double)convertTime(totalRunTime)/(double)convertTime(totalTime)*100)+"%)");
 		printEnd();
 	}
 
 	private void printDuck(){
 		printStart("Duck Variables");
-		System.out.println("Number of Times Ducked: " + timesDucked);
-		System.out.println("Time Spent Ducking: " + convertTime(totalDuckTime) + " ("+Math.round((double)convertTime(totalDuckTime)/(double)convertTime(totalTime)*(double)100)+"%)");
+		//System.out.println("Number of Times Ducked: " + timesDucked);
+		//System.out.println("Time Spent Ducking: " + convertTime(totalDuckTime) + " ("+Math.round((double)convertTime(totalDuckTime)/(double)convertTime(totalTime)*(double)100)+"%)");
 		printEnd();
 	}
 
 	private void printTime(){
 		printStart("Time Variables");
-		System.out.println("Total Completion Time: " + convertTime(totalTime));
-		System.out.println("Total Last Time: " + convertTime(completionTime));
+		//System.out.println("Total Completion Time: " + convertTime(totalTime));
+		//System.out.println("Total Last Time: " + convertTime(completionTime));
 		printEnd();
 	}
 
@@ -713,12 +713,12 @@ public class DataRecorder {
 				break;
 			}
 
-			System.out.println(type + " " + deaths[i] + " times.");
+			//System.out.println(type + " " + deaths[i] + " times.");
 
 			deathsTotal+= deaths[i];
 		}
 
-		System.out.println("\nPlayer died a total of " + deathsTotal + " times");
+		//System.out.println("\nPlayer died a total of " + deathsTotal + " times");
 
 		printEnd();
 
@@ -770,25 +770,25 @@ public class DataRecorder {
 			tweak = 1;
 
 
-		for(int i=0;i<50/2-title.length()/2;++i)
-			System.out.print(">");
+//		for(int i=0;i<50/2-title.length()/2;++i)
+			//System.out.print(">");
 
-		System.out.print(title);
+		//System.out.print(title);
 
-		for(int i=0;i<50/2-title.length()/2 - tweak;++i)
-			System.out.print("<");
+//		for(int i=0;i<50/2-title.length()/2 - tweak;++i)
+			//System.out.print("<");
 
-		System.out.print("\n");
+		//System.out.print("\n");
 
 	}
 
 	private void printEnd(){
-		System.out.println("------------------- "+switchedPower+" -------------------");
+		//System.out.println("------------------- "+switchedPower+" -------------------");
 
-		for(int i=0;i<50;++i)
-			System.out.print("-");
+//		for(int i=0;i<50;++i)
+			//System.out.print("-");
 
-		System.out.print("\n");
+		//System.out.print("\n");
 	}
 
 	public void fillGamePlayMetrics(MyLevel level){
@@ -841,7 +841,7 @@ public class DataRecorder {
 		gpm.CannonBallKilled = kills[SpriteTemplate.CANNON_BALL];
 		gpm.ChompFlowersKilled = kills[SpriteTemplate.CHOMP_FLOWER];
 		gpm.write("player.txt");
-		System.out.println(detailedLog);
+		//System.out.println(detailedLog);
 		write(detailedLog);
 		
 	}

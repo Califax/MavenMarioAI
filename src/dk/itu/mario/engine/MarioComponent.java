@@ -123,7 +123,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
 		        	try{
 		        		System.exit(1);
 		        	}catch(Exception e){
-		        		System.out.println("Unable to exit.");
+		        		//System.out.println("Unable to exit.");
 		        	}
 		        }
 		    }
@@ -380,7 +380,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
 			public void mouseReleased(MouseEvent e) {
 
 				while(!hasFocus()){
-					System.out.println("FORCE IT");
+					//System.out.println("FORCE IT");
 					requestFocus();
 				}
 			}

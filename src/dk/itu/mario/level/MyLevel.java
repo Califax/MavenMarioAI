@@ -68,10 +68,8 @@ public class MyLevel extends Level {
 			if (at.x % 22 == 0) {
 				createBlock(at, 3, BLOCK_POWERUP);
 			}
-			
 		}
 
-		
 		/*
 		 * coordinates of the exit
 		 */
@@ -293,8 +291,8 @@ public class MyLevel extends Level {
 	}
 	   
 	public MyLevel clone() throws CloneNotSupportedException {
-	//	System.out.println("Called clone");
-		System.out.println(playerMetrics);
+	//	//System.out.println("Called clone");
+		//System.out.println(playerMetrics);
 		MyLevel clone = new MyLevel(width, height);
 
 		clone.xExit = xExit;
