@@ -139,11 +139,19 @@ import dk.itu.mario.res.ResourcesManager;
 			}
 
 			public void winActions(){
-				if(recorder != null)
+				
+				// Update the metrics to include the previous level
+				if(recorder != null) {
 					recorder.fillGamePlayMetrics((MyLevel)level);
-				//TODO: Marker
-				marioComponent.toCustomGame();
-				//marioComponent.win();
+				}
+				
+				marioComponent.incLevelNum();
+				if (marioComponent.getLevelNum() == marioComponent.getNumLevels()) {
+					marioComponent.win();
+				}
+				else {
+					marioComponent.generateNextLevel();
+				}
 			}
 
 			public void deathActions(){
