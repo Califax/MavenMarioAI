@@ -1,6 +1,10 @@
 package dk.itu.mario.level;
 
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import dk.itu.mario.MarioInterface.GamePlay;
@@ -14,12 +18,18 @@ public class MyLevel extends Level {
 	public static int BLOCKS_COINS = 0;
 	public static int COINS = 0;
 	public static int ENEMIES = 0;
+	
 	// Store information about the level
 	private Random random;
 	private int difficulty;
 	private int type;
 	private GamePlay playerMetrics;
 
+	// Configurations
+	private Map<Configuration, Integer> configMap;
+	private List<Configuration> configs;
+	
+	
 	public MyLevel(int width, int height) {
 		super(width, height);
 	}
@@ -35,39 +45,22 @@ public class MyLevel extends Level {
 		this.type = type;
 		this.difficulty = difficulty;
 		this.random = new Random(seed);
+		this.configMap = getConfigurations();
+		this.configs = new ArrayList<>(this.configMap.keySet());
+		
 	}
 
 	public void create() {
 		// create the start location
 		Point at = new Point(0, 2);
-		int randomWidth = 50-random.nextInt(25);
-		while(at.x < randomWidth) {
-			if (at.x % 10 == 8) {
-				int newHeight = random.nextInt(2) + 1 - random.nextInt(2);
-				at = jump(at, 1, newHeight);
-			} else {
-				at = straight(at, 1);
-			}
-			
-			if (at.x > 20 && at.x % 21 == 4) {
-				pipe(at, random.nextInt(2) + 1, random.nextBoolean());
-			}
-			
-			if (at.x % 31 == 0) {
-				enemy(at, Enemy.ENEMY_GOOMBA, random.nextBoolean());
-			}
-			
-			if (at.x % 21 == 0) {
-				cannon(at, 3);
-			}
-			
-			if (at.x % 20 == 0) {
-				createBlock(at, 3, BLOCK_EMPTY);
-			}
-			
-			if (at.x % 22 == 0) {
-				createBlock(at, 3, BLOCK_POWERUP);
-			}
+		
+		// width we want to leave safe at the end and beginning
+		int cushion = 10;
+		
+		at = straight(at, cushion);
+		while(at.x < width - cushion) {
+			int config = random.nextInt(configs.size());
+			at = configs.get(config).apply(at);
 		}
 
 		/*
@@ -75,7 +68,7 @@ public class MyLevel extends Level {
 		 */
 		xExit = at.x;
 		yExit = y(at.y - 1);
-		straight(at, width - at.x);
+		at = straight(at, width - at.x);
 		fixWalls();
 	}
 
@@ -308,5 +301,94 @@ public class MyLevel extends Level {
 		}
 		return clone;
 
+	}
+	
+	/*
+	 * Configurations
+	 */
+	
+	private Map<Configuration, Integer> getConfigurations() {
+		Map<Configuration, Integer> configurations = new HashMap<>();
+		
+		configurations.put(new Configuration() {
+			@Override
+			public String id() {
+				return "straight";
+			}
+			
+			@Override
+			public Point apply(Point at) {
+				int w = random.nextInt(5) + 2;
+				return straight(at, w);
+			}
+		}, 1);
+		
+		configurations.put(new Configuration() {
+			@Override
+			public String id() {
+				return "gap";
+			}
+			
+			@Override
+			public Point apply(Point at) {
+				at = jump(at, 3, 0);
+				return straight(at, 2);
+			}
+		}, 1);
+		
+		configurations.put(new Configuration() {
+			@Override
+			public String id() {
+				return "jump";
+			}
+			
+			@Override
+			public Point apply(Point at) {
+				int h = random.nextInt(7) - 3;
+				while (at.y + h >= height || at.y + h <= 0) {
+					h = random.nextInt(7) - 3;
+				}
+				
+				at = jump(at, 3, h);
+				return straight(at, 2);
+			}
+		}, 1);
+		
+		configurations.put(new Configuration() {
+			@Override
+			public String id() {
+				return "goomba";
+			}
+			
+			@Override
+			public Point apply(Point at) {
+				at = straight(at, 4);
+				enemy(at, Enemy.ENEMY_GOOMBA, false);
+				return straight(at, 1);
+			}
+		}, 1);
+		
+		return configurations;
+	}
+	
+	private abstract class Configuration {
+		
+		abstract String id();
+		abstract Point apply(Point at);
+		
+		@Override
+		public int hashCode() {
+			return id().hashCode();
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			return id().equals(obj);
+		}
+		
+		@Override
+		public String toString() {
+			return id();
+		}
 	}
 }
