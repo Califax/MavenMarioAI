@@ -13,6 +13,7 @@ import dk.itu.mario.engine.sprites.Shell;
 import dk.itu.mario.engine.sprites.Sprite;
 
 import dk.itu.mario.level.Level;
+import dk.itu.mario.level.MyLevel;
 import dk.itu.mario.level.RandomLevel;
 import dk.itu.mario.scene.LevelScene;
 import dk.itu.mario.engine.sprites.FlowerEnemy;
@@ -20,7 +21,7 @@ import dk.itu.mario.engine.sprites.FlowerEnemy;
 public class DataRecorder {
 
 	public boolean recording = true;
-	private RandomLevel level;
+	private MyLevel level;
 	private boolean []keys, keyPressed;
 	private LevelScene levelScene;
 
@@ -109,14 +110,16 @@ public class DataRecorder {
 		return detailedLog;
 	}
 	
-	public DataRecorder(LevelScene levelScene, RandomLevel level, boolean []keys){
+	
+	public DataRecorder(LevelScene levelScene, MyLevel level, boolean []keys){
 		this.levelScene = levelScene;
 		this.level = level;
 		this.keys = keys;
 
 		keyPressed = new boolean[keys.length];
-
+		
 		reset();
+		fillGamePlayMetrics((MyLevel)level);
 	}
 
 	public void reset(){
@@ -325,11 +328,13 @@ public class DataRecorder {
 
 	private boolean littleRecording = false;
 
+	//TODO: Look into the correctness of this method. Commented out switchedPower
+	 
 	public void startLittleRecord(){
 		if(!littleRecording){
 			littleRecording = true;
 
-			switchedPower++;
+			//switchedPower++;
 
 			System.out.println("------------------- "+switchedPower+" -------------------");
 
@@ -786,7 +791,7 @@ public class DataRecorder {
 		System.out.print("\n");
 	}
 
-	public void fillGamePlayMetrics(RandomLevel level){
+	public void fillGamePlayMetrics(MyLevel level){
         GamePlay gpm = new GamePlay();
 		gpm.completionTime = getCompletionTime();
 		gpm.totalTime = getTotalTime();////sums all the time, including from previous games if player died
@@ -809,7 +814,7 @@ public class DataRecorder {
 		gpm.enemyKillByFire = getKillsFire();//Number of Kills by Shooting Enemy
 		gpm.enemyKillByKickingShell = getKillsShell();//Number of Kills by Kicking Shell on Enemy
 		gpm.totalEnemies = level.ENEMIES;
-
+		gpm.timesSwichingPower = getSwitchedPower();
 		gpm.totalTimeLittleMode = getTotalLittleTime();
 		gpm.totalTimeLargeMode = getTotalLargeTime();//Time Spent Being Large Mario
 		gpm.totalTimeFireMode = getTotalFireTime();//Time Spent Being Fire Mario

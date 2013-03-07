@@ -177,7 +177,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
 		        if (isCustom)
 		        	toCustomGame();
 		        else
-		        toRandomGame();
+		        	toRandomGame();
 
 		        float correction = 0f;
 		        if(System.getProperty("os.name") == "Mac OS X");
@@ -336,7 +336,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
 		    public void toCustomGame(){
 
 		    	randomLevel = new LevelSceneTest(graphicsConfiguration,this,new Random().nextLong(),0,0,true);
-
+		    	//TODO: Save mario conditions from last round
 		    	Mario.fire = false;
 		    	Mario.large = false;
 		    	Mario.coins = 0;

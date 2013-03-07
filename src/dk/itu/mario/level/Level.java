@@ -126,7 +126,13 @@ public class Level implements LevelInterface {
 			y = height - 1;
 		return map[x][y];
 	}
-
+	
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @param b
+	 */
 	public void setBlock(int x, int y, byte b) {
 		if (x < 0)
 			return;

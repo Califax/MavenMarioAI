@@ -20,7 +20,7 @@ public class FileHandler {
             
 			
             while (line != null){
-//                System.out.println(count+": "+line);
+            //  System.out.println(count+": "+line);
                 line = bufRead.readLine();
                 info += line + "\n";
                 count++;

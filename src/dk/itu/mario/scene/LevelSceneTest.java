@@ -118,8 +118,8 @@ import dk.itu.mario.res.ResourcesManager;
 
 		    	double startX = 32; //mario start position
 		    	double endX = level.getxExit()*squareSize; //position of the end on the level
-		    	if(!isCustom && recorder==null)
-		    		recorder = new DataRecorder(this,(RandomLevel)level,keys);
+		    	if(isCustom && recorder==null)
+		    		recorder = new DataRecorder(this,(MyLevel)level,keys);
 
 		        gameStarted = false;
 			}
@@ -140,15 +140,16 @@ import dk.itu.mario.res.ResourcesManager;
 
 			public void winActions(){
 				if(recorder != null)
-				recorder.fillGamePlayMetrics((RandomLevel)level);
-				
-				marioComponent.win();
+					recorder.fillGamePlayMetrics((MyLevel)level);
+				//TODO: Marker
+				marioComponent.toCustomGame();
+				//marioComponent.win();
 			}
 
 			public void deathActions(){
 				if(Mario.lives <=0){//has no more lives
 					if(recorder != null)
-					recorder.fillGamePlayMetrics((RandomLevel)level);
+					recorder.fillGamePlayMetrics((MyLevel)level);
 					marioComponent.lose();
 				}
 				else // mario still has lives to play :)--> have a new beginning
