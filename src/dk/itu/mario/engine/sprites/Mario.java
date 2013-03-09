@@ -28,7 +28,7 @@ public class Mario extends Sprite
         large = false;
         fire = false;
         coins = 0;
-        lives = 3;
+        lives = 5;
         levelString = "none";
     }
 
@@ -752,7 +752,7 @@ public class Mario extends Sprite
     {
         xDeathPos = (int) x;
         yDeathPos = (int) y;
-        System.out.println(MyLevel.mappedValue((int) x/16));
+        System.out.println("Died To: " + MyLevel.configurationDeath((int) x/16));
         world.paused = true;
         deathTime = 1;
         Art.stopMusic();

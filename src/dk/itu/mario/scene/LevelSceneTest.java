@@ -147,6 +147,8 @@ import dk.itu.mario.res.ResourcesManager;
 				
 				marioComponent.incLevelNum();
 				if (marioComponent.getLevelNum() == marioComponent.getNumLevels()) {
+					recorder.reset(); // write over old data
+					recorder.fillGamePlayMetrics((MyLevel)level);
 					marioComponent.win();
 				}
 				else {
@@ -156,8 +158,10 @@ import dk.itu.mario.res.ResourcesManager;
 
 			public void deathActions(){
 				if(Mario.lives <=0){//has no more lives
-					if(recorder != null)
-					recorder.fillGamePlayMetrics((MyLevel)level);
+					if(recorder != null) {
+						recorder.reset();
+						recorder.fillGamePlayMetrics((MyLevel)level);
+					}
 					marioComponent.lose();
 				}
 				else // mario still has lives to play :)--> have a new beginning

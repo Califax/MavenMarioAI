@@ -31,16 +31,31 @@ public class MyLevel extends Level {
 	private Map<Configuration, Integer> configMap;
 	private List<Configuration> configs;
 	public static TreeMap<Integer, Configuration> configTreeMap;
+	private static Map<Configuration, Integer> configFreqMap;
 
 	
-	public static Configuration mappedValue(Integer key) {
+	/**
+	 * Will take in the coordinate mario died at and find the configuration that the
+	 * x coordinate is within range of
+	 * @param key The x coordinate mario died at
+	 * @return
+	 */
+	public static Configuration configurationDeath(Integer key) {
 		Integer k = key > configTreeMap.firstKey() ? configTreeMap.floorKey(key) : configTreeMap.firstKey();
 	    if (k != null ) {
-	        return configTreeMap.get(k);
+	    	Configuration config = configTreeMap.get(k);
+	    	Integer freq = configFreqMap.get(k);
+	    	if (freq != null) {
+	    		configFreqMap.put(config, ++freq);
+	    	}
+	    	else {
+	    		configFreqMap.put(config, 1);
+	    	}
+	        return config;
 	    }
 	    else {
 	    	return null;
-	    }
+	    } 
 	}
 	
 	public MyLevel(int width, int height) {
@@ -49,7 +64,7 @@ public class MyLevel extends Level {
 
 	public MyLevel(int width, int height, long seed, int difficulty, int type, GamePlay playerMetrics) {
 		this(width, height);
-		System.out.println(playerMetrics);
+		//System.out.println(playerMetrics);
 		this.playerMetrics = playerMetrics;
 		init(seed, difficulty, type);
 		create();
@@ -61,15 +76,24 @@ public class MyLevel extends Level {
 		this.random = new Random(seed);
 		this.configMap = getConfigurations();
 		this.configs = new ArrayList<>(this.configMap.keySet());
-		configTreeMap = new TreeMap<Integer, Configuration>();
+		this.configTreeMap = new TreeMap<Integer, Configuration>();
+		if (configFreqMap == null) {
+			configFreqMap = new HashMap<Configuration, Integer>();
+		}
 	}
-
+	
+	public void printFreqMap() {
+		for (Entry<Configuration, Integer> e: configFreqMap.entrySet()) {
+			System.out.print(e.getKey() + " : " + e.getValue() + " ");
+		}
+		System.out.println();
+	}
 	public void create() {
 		// create the start location
 		Point at = new Point(0, 2);
 
 		// width we want to leave safe at the end and beginning
-		int cushion = 10;
+		int cushion = 15;
 
 		at = straight(at, cushion);
 		while(at.x < width - cushion) {
@@ -500,7 +524,7 @@ public class MyLevel extends Level {
 				enemy(at, Enemy.ENEMY_GREEN_KOOPA_FLYING, true);
 				at = jump(at, 4, 0);
 				enemy(at, Enemy.ENEMY_GREEN_KOOPA_FLYING, true);
-				at = jump(at, 4, 0);
+				at = jump(at, 3, 0);
 				at = straight(at, 2);
 				return at;
 			}

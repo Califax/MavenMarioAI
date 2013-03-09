@@ -41,7 +41,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
 		    private boolean running = false;
 		    private int width, height;
 		    private int levelNum = 0;
-		    private int numLevels = 3;
+		    private int numLevels = 4;
 
 			private GraphicsConfiguration graphicsConfiguration;
 		    private Scene scene;
