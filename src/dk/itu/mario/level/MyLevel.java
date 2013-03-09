@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
+import java.util.TreeMap;
 
 import dk.itu.mario.MarioInterface.GamePlay;
 import dk.itu.mario.MarioInterface.LevelInterface;
@@ -28,14 +30,26 @@ public class MyLevel extends Level {
 	// Configurations
 	private Map<Configuration, Integer> configMap;
 	private List<Configuration> configs;
+	public static TreeMap<Integer, Configuration> configTreeMap;
 
-
+	
+	public static Configuration mappedValue(Integer key) {
+		Integer k = key > configTreeMap.firstKey() ? configTreeMap.floorKey(key) : configTreeMap.firstKey();
+	    if (k != null ) {
+	        return configTreeMap.get(k);
+	    }
+	    else {
+	    	return null;
+	    }
+	}
+	
 	public MyLevel(int width, int height) {
 		super(width, height);
 	}
 
 	public MyLevel(int width, int height, long seed, int difficulty, int type, GamePlay playerMetrics) {
 		this(width, height);
+		System.out.println(playerMetrics);
 		this.playerMetrics = playerMetrics;
 		init(seed, difficulty, type);
 		create();
@@ -47,7 +61,7 @@ public class MyLevel extends Level {
 		this.random = new Random(seed);
 		this.configMap = getConfigurations();
 		this.configs = new ArrayList<>(this.configMap.keySet());
-
+		configTreeMap = new TreeMap<Integer, Configuration>();
 	}
 
 	public void create() {
@@ -60,6 +74,7 @@ public class MyLevel extends Level {
 		at = straight(at, cushion);
 		while(at.x < width - cushion) {
 			int config = random.nextInt(configs.size());
+			configTreeMap.put(at.x, configs.get(config));
 			at = configs.get(config).apply(at);
 		}
 
@@ -94,6 +109,16 @@ public class MyLevel extends Level {
 	private Point jump(Point at, int l, int h) {
 		at.x += l;
 		at.y += h;
+		return at;
+	}
+	
+	private Point randomJump(Point at) {
+		int h = random.nextInt(7) - 3;
+		int l = random.nextInt(3) + 1;
+		while (at.y + h >= height || at.y + h <= 0) {
+			h = random.nextInt(7) - 3;
+		}
+		at = jump(at, l, h);
 		return at;
 	}
 
@@ -445,6 +470,39 @@ public class MyLevel extends Level {
 					}
 				}
 				return straight(at, 2);
+			}
+		}, 1);
+		
+		configurations.put(new Configuration() {
+			@Override
+			public String id() {
+				return "JumpThenSpiky";
+			}
+			
+			@Override
+			public Point apply(Point at) {
+				at = randomJump(at);
+				at = straight(at, 3);
+				enemy(at, Enemy.ENEMY_SPIKY, true);
+				return at;
+			}
+		}, 1);
+		
+		configurations.put(new Configuration() {
+			@Override
+			public String id() {
+				return "JumpWithTurtle";
+			}
+			
+			@Override
+			public Point apply(Point at) {
+				at = jump(at, 4, 0);
+				enemy(at, Enemy.ENEMY_GREEN_KOOPA_FLYING, true);
+				at = jump(at, 4, 0);
+				enemy(at, Enemy.ENEMY_GREEN_KOOPA_FLYING, true);
+				at = jump(at, 4, 0);
+				at = straight(at, 2);
+				return at;
 			}
 		}, 1);
 

@@ -10,6 +10,7 @@ import java.io.Serializable;
 
 public class GamePlay implements Serializable {
 		
+
 	private static final long serialVersionUID = 1L;
 	
 	public int completionTime; //counts only the current run on the level, excluding death games
@@ -57,6 +58,10 @@ public class GamePlay implements Serializable {
 	public int CannonBallKilled; //number of Cannon Ball Mario killed
 	public int JumpFlowersKilled; //number of Jump Flower Mario killed
 	public int ChompFlowersKilled; //number of Chomp Flower Mario killed
+	
+	public int getCompletionTime() {
+		return completionTime;
+	}
 	
 	public void write(String fileName){
 		ObjectOutputStream out = null;

@@ -8,6 +8,7 @@ import dk.itu.mario.engine.Art;
 import dk.itu.mario.engine.DataRecorder;
 import dk.itu.mario.engine.sonar.FixedSoundSource;
 import dk.itu.mario.level.Level;
+import dk.itu.mario.level.MyLevel;
 import dk.itu.mario.scene.LevelScene;
 import dk.itu.mario.scene.Scene;
 
@@ -751,6 +752,7 @@ public class Mario extends Sprite
     {
         xDeathPos = (int) x;
         yDeathPos = (int) y;
+        System.out.println(MyLevel.mappedValue((int) x/16));
         world.paused = true;
         deathTime = 1;
         Art.stopMusic();

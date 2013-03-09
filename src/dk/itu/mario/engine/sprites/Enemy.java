@@ -1,6 +1,7 @@
 package dk.itu.mario.engine.sprites;
 
 import java.awt.Graphics;
+import java.util.Random;
 
 
 import dk.itu.mario.engine.Art;
@@ -16,6 +17,7 @@ public class Enemy extends Sprite
     public static final int ENEMY_GOOMBA = 2;
     public static final int ENEMY_SPIKY = 3;
     public static final int ENEMY_FLOWER = 4;
+    public static final int ENEMY_GREEN_KOOPA_FLYING = 1; // TODO: figure out how to draw koopas
 
     private static float GROUND_INERTIA = 0.89f;
     private static float AIR_INERTIA = 0.89f;
@@ -40,6 +42,8 @@ public class Enemy extends Sprite
 
     public boolean winged = true;
     private int wingTime = 0;
+    private Random rand = new Random();
+    private boolean flyUp = false;
 
     public boolean noFireballDeath;
 
@@ -106,7 +110,7 @@ public class Enemy extends Sprite
                         {
                             spriteContext.addSprite(new Shell(world, x, y, 0));
                         }
-                        else if (type == Enemy.ENEMY_GREEN_KOOPA)
+                        else if (type == Enemy.ENEMY_GREEN_KOOPA || type == Enemy.ENEMY_GREEN_KOOPA_FLYING)
                         {
                             spriteContext.addSprite(new Shell(world, x, y, 1));
                         }
@@ -155,6 +159,23 @@ public class Enemy extends Sprite
             }
             return;
         }
+        
+       	if (type == ENEMY_GREEN_KOOPA_FLYING && winged == true) {
+       		rand = new Random(rand.nextInt());
+       		if (y <= 100 && flyUp == false) {
+       			flyUp = true;
+       		}
+    		if (y >= 220 && flyUp == true) {
+       			flyUp = false;
+       		}
+       		if (flyUp) {
+       			y += 1.2 + rand.nextDouble();
+       		}
+       		else {
+       			y -= 1.2 + rand.nextDouble();
+       		}
+    		return;
+    	}
 
 
         float sideWaysSpeed = 1.75f;
@@ -430,7 +451,7 @@ public class Enemy extends Sprite
             int xPixel = (int) (xOld + (x - xOld) * alpha) - xPicO;
             int yPixel = (int) (yOld + (y - yOld) * alpha) - yPicO;
 
-            if (type == Enemy.ENEMY_GREEN_KOOPA || type == Enemy.ENEMY_RED_KOOPA)
+            if (type == Enemy.ENEMY_GREEN_KOOPA || type == Enemy.ENEMY_RED_KOOPA || type == Enemy.ENEMY_GREEN_KOOPA_FLYING)
             {
                 og.drawImage(sheet[wingTime / 4 % 2][4], xPixel + (xFlipPic ? wPic : 0) + (xFlipPic ? 10 : -10), yPixel + (yFlipPic ? hPic : 0) - 10, xFlipPic ? -wPic : wPic, yFlipPic ? -hPic : hPic, null);
             }
