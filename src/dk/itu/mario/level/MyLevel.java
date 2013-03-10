@@ -515,7 +515,7 @@ public class MyLevel extends Level {
 		configurations.put(new Configuration() {
 			@Override
 			public String id() {
-				return "JumpWithTurtle";
+				return "JumpWithTurtles";
 			}
 			
 			@Override
@@ -529,6 +529,30 @@ public class MyLevel extends Level {
 				return at;
 			}
 		}, 1);
+		
+		configurations.put(new Configuration() {
+			@Override
+			public String id() {
+				return "multipleCannonJump";
+			}
+
+			@Override
+			public Point apply(Point at) {
+				at = straight(at, 1);
+				int h = random.nextInt(2) + 2;
+				cannon(at, h);
+				at = straight(at, 2);
+				h++;
+				cannon(at, h);
+				at = straight(at, 2);
+				h++;
+				cannon(at, h);
+				at = straight(at, 2);
+				at = jump(at, 8, 0);
+				return at = straight(at, 2);
+			}
+		}, 1);
+		
 
 		return configurations;
 	}
