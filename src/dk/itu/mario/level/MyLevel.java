@@ -26,9 +26,11 @@ public class MyLevel extends Level {
 	private int difficulty;
 	private int type;
 	private GamePlay playerMetrics;
+	private int fastestPossibleTime = width / 10;
+	private int prevLevelCompTime;
 
 	// Configurations
-	private Map<Configuration, Integer> configMap;
+	private static Map<Configuration, Integer> configMap; // Only static for easy access in engine
 	private List<Configuration> configs;
 	public static TreeMap<Integer, Configuration> configTreeMap;
 	private static Map<Configuration, Integer> configFreqMap;
@@ -51,6 +53,8 @@ public class MyLevel extends Level {
 	    	else {
 	    		configFreqMap.put(config, 1);
 	    	}
+	    	int oldDiff = configMap.get(config);
+	    	configMap.put(config, ++oldDiff); // Increase difficulty of config player died to
 	        return config;
 	    }
 	    else {
@@ -64,10 +68,12 @@ public class MyLevel extends Level {
 
 	public MyLevel(int width, int height, long seed, int difficulty, int type, GamePlay playerMetrics) {
 		this(width, height);
-		//System.out.println(playerMetrics);
 		this.playerMetrics = playerMetrics;
 		init(seed, difficulty, type);
+		prevLevelCompTime = playerMetrics.getCompletionTime();
 		create();
+		//System.out.println(playerMetrics);
+		
 	}
 
 	public void init(long seed, int difficulty, int type) {

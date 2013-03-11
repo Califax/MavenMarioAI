@@ -152,6 +152,9 @@ import dk.itu.mario.res.ResourcesManager;
 					marioComponent.win();
 				}
 				else {
+					recorder.fillGamePlayMetrics((MyLevel)level);
+					recorder = null;
+					//recorder.reset(); // TODO Check
 					marioComponent.generateNextLevel();
 				}
 			}

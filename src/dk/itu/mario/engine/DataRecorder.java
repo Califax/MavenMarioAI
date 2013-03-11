@@ -120,6 +120,7 @@ public class DataRecorder {
 		
 		reset();
 		fillGamePlayMetrics((MyLevel)level);
+	
 	}
 
 	public void reset(){

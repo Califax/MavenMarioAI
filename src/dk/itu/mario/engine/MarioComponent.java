@@ -363,7 +363,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
 		    	Mario.fire = false;
 		    	Mario.large = false;
 		    	Mario.coins = 0;
-		    	Mario.lives = 3;
+		    	Mario.lives = 10;
 
 		    	randomLevel.init();
 		    	randomLevel.setSound(sound);
@@ -372,6 +372,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
 		    }
 		    
 		    public void generateNextLevel(){
+		    	
 		    	randomLevel = new LevelSceneTest(graphicsConfiguration,this,new Random().nextLong(),0,0,true);
 		    	randomLevel.init();
 		    	randomLevel.setSound(sound);
