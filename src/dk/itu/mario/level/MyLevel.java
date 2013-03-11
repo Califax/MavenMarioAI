@@ -30,7 +30,7 @@ public class MyLevel extends Level {
 	private int prevLevelCompTime;
 
 	// Configurations
-	private static Map<Configuration, Integer> configMap; // Only static for easy access in engine
+	private static Map<Configuration, Integer> configMap; // Only static vars for easy access in engine
 	private List<Configuration> configs;
 	public static TreeMap<Integer, Configuration> configTreeMap;
 	private static Map<Configuration, Integer> configFreqMap;
@@ -556,6 +556,68 @@ public class MyLevel extends Level {
 				at = straight(at, 2);
 				at = jump(at, 8, 0);
 				return at = straight(at, 2);
+			}
+		}, 1);
+		
+		configurations.put(new Configuration() {
+			@Override
+			public String id() {
+				return "FloatingBlockway";
+			}
+			
+			@Override
+			public Point apply(Point at) {
+				at = jump(at, 3, 0);
+				int h = random.nextInt(2) + 1;
+				for (int i = 0; i < h; i++) {
+					block(at, h, BLOCK_EMPTY);
+					at = jump(at, 1, 0);
+				}
+				at = jump(at, 2, 0);
+				h = random.nextInt(3) + 1;
+				for (int i = 0; i < h; i++) {
+					block(at, h, BLOCK_EMPTY);
+					at = jump(at, 1, 0);
+				}
+				at = jump(at, 2, 0);
+				enemy(at, Enemy.ENEMY_GREEN_KOOPA_FLYING, true);
+				at = jump(at, 3, 0);
+				at = straight(at, 2);
+				return at;
+			}
+		}, 1);
+		
+		configurations.put(new Configuration() {
+			@Override
+			public String id() {
+				return "FloatingBlockwayWithRedTurtles";
+			}
+			
+			@Override
+			public Point apply(Point at) {
+				at = jump(at, 3, 0);
+				int h = random.nextInt(2) + 1;
+				for (int i = 0; i < h; i++) {
+					at = jump(at, 1, 0);
+					block(at, h, BLOCK_EMPTY);
+					at = jump(at, 1, 0);
+					block(at, h, BLOCK_EMPTY);
+				
+					if (i%3 == 0) {
+						enemy(new Point(at.x, at.y+h+1), Enemy.ENEMY_RED_KOOPA, false);
+					}
+				}
+				at = jump(at, 2, 0);
+				h = random.nextInt(4);
+				for (int i = 0; i < h; i++) {
+					at = jump(at, 1, 0);
+					block(at, h, BLOCK_EMPTY);
+					if (i%2 == 0) {
+						enemy(new Point(at.x, at.y+h+1), Enemy.ENEMY_RED_KOOPA, false);
+					}
+				}
+				at = straight(at, 2);
+				return at;
 			}
 		}, 1);
 		
