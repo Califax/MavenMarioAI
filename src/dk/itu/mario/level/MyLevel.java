@@ -568,13 +568,14 @@ public class MyLevel extends Level {
 			@Override
 			public Point apply(Point at) {
 				at = jump(at, 3, 0);
-				int h = random.nextInt(2) + 1;
+				int h = random.nextInt(3) + 1;
 				for (int i = 0; i < h; i++) {
 					block(at, h, BLOCK_EMPTY);
 					at = jump(at, 1, 0);
+					block(at, h+random.nextInt(2)+1, BLOCK_EMPTY);
 				}
 				at = jump(at, 2, 0);
-				h = random.nextInt(3) + 1;
+				h = random.nextInt(4) + 1;
 				for (int i = 0; i < h; i++) {
 					block(at, h, BLOCK_EMPTY);
 					at = jump(at, 1, 0);
@@ -616,6 +617,78 @@ public class MyLevel extends Level {
 						enemy(new Point(at.x, at.y+h+1), Enemy.ENEMY_RED_KOOPA, false);
 					}
 				}
+				at = straight(at, 3);
+				return at;
+			}
+		}, 1);
+		
+		configurations.put(new Configuration() {
+			@Override
+			public String id() {
+				return "FloatingNarrowBlockway";
+			}
+			
+			@Override
+			public Point apply(Point at) {
+				int high = 4;
+				int low = -1;
+				int l = 9;
+				at = straight(at, 3);
+				block(at, high, BLOCK_COIN);
+				cannon(at, 2);
+				at = straight(at, 1);
+				block(at, high, BLOCK_EMPTY);
+				at = straight(at, 1);
+				for (int i = 0; i < l; i++) {
+					block(at, high, BLOCK_EMPTY);
+					if (i%3 == 0) {
+						enemy(new Point(at.x, at.y+1), Enemy.ENEMY_GOOMBA, false);
+					}
+					block(at, low, BLOCK_EMPTY);
+					at = jump(at, 1, 0);
+				}
+				block(at, high, BLOCK_EMPTY);
+				at = straight(at, 1);
+				block(at, high, BLOCK_EMPTY);
+				at = straight(at, 1);
+				block(at, high, BLOCK_POWERUP);
+				cannon(at, 2);
+				at = straight(at, 2);
+				return at;
+			}
+		}, 1);
+		
+		configurations.put(new Configuration() {
+			@Override
+			public String id() {
+				return "FloatingNarrowBlockwayWithSpikey";
+			}
+			
+			@Override
+			public Point apply(Point at) {
+				int high = 4;
+				int low = -1;
+				int l = 6;
+				at = straight(at, 3);
+				block(at, high, BLOCK_EMPTY);
+				cannon(at, 2);
+				at = straight(at, 1);
+				block(at, high, BLOCK_EMPTY);
+				at = straight(at, 1);
+				for (int i = 0; i < l; i++) {
+					block(at, high, BLOCK_COIN);
+					if (i%3 == 0) {
+						enemy(new Point(at.x, at.y+1), Enemy.ENEMY_SPIKY, false);
+					}
+					block(at, low, BLOCK_EMPTY);
+					at = jump(at, 1, 0);
+				}
+				block(at, high, BLOCK_EMPTY);
+				at = straight(at, 1);
+				block(at, high, BLOCK_EMPTY);
+				at = straight(at, 1);
+				block(at, high, BLOCK_EMPTY);
+				cannon(at, 2);
 				at = straight(at, 2);
 				return at;
 			}
