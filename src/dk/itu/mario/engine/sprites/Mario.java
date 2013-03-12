@@ -20,7 +20,7 @@ public class Mario extends Sprite
     public static boolean large = false;
     public static boolean fire = false;
     public static int coins = 0;
-    public static int lives = 3;
+    public static int lives = 100;
     public static String levelString = "none";
 
     public static void resetStatic()
@@ -28,7 +28,7 @@ public class Mario extends Sprite
         large = false;
         fire = false;
         coins = 0;
-        lives = 5;
+        lives = 100;
         levelString = "none";
     }
 
@@ -902,7 +902,7 @@ public class Mario extends Sprite
     {
         instance.world.sound.play(Art.samples[Art.SAMPLE_MARIO_1UP], instance, 1, 1, 1);
         lives++;
-        if (lives==99)
+        if (lives == 99)
         {
             lives = 99;
         }

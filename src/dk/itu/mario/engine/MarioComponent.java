@@ -349,7 +349,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
 		    	Mario.fire = false;
 		    	Mario.large = false;
 		    	Mario.coins = 0;
-		    	Mario.lives = 3;
+		    	Mario.lives = 100;
 
 		    	randomLevel.init();
 		    	randomLevel.setSound(sound);
@@ -363,7 +363,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
 		    	Mario.fire = false;
 		    	Mario.large = false;
 		    	Mario.coins = 0;
-		    	Mario.lives = 10;
+		    	Mario.lives = 100;
 
 		    	randomLevel.init();
 		    	randomLevel.setSound(sound);

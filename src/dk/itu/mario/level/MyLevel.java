@@ -35,7 +35,6 @@ public class MyLevel extends Level {
 	public static TreeMap<Integer, Configuration> configTreeMap;
 	private static Map<Configuration, Integer> configFreqMap;
 
-	
 	/**
 	 * Will take in the coordinate mario died at and find the configuration that the
 	 * x coordinate is within range of
@@ -80,9 +79,9 @@ public class MyLevel extends Level {
 		this.type = type;
 		this.difficulty = difficulty;
 		this.random = new Random(seed);
-		this.configMap = getConfigurations();
-		this.configs = new ArrayList<>(this.configMap.keySet());
-		this.configTreeMap = new TreeMap<Integer, Configuration>();
+		configMap = getConfigurations();
+		this.configs = new ArrayList<>(configMap.keySet());
+		configTreeMap = new TreeMap<Integer, Configuration>();
 		if (configFreqMap == null) {
 			configFreqMap = new HashMap<Configuration, Integer>();
 		}
@@ -94,6 +93,7 @@ public class MyLevel extends Level {
 		}
 		System.out.println();
 	}
+	
 	public void create() {
 		// create the start location
 		Point at = new Point(0, 2);
@@ -103,9 +103,28 @@ public class MyLevel extends Level {
 
 		at = straight(at, cushion);
 		while(at.x < width - cushion) {
-			int config = random.nextInt(configs.size());
-			configTreeMap.put(at.x, configs.get(config));
-			at = configs.get(config).apply(at);
+			int sum = 0;
+			for (Configuration c : configs) {
+				if (configMap.containsKey(c)) {
+					sum += configMap.get(c);
+					sum += difficulty;
+				}
+			}
+			int config = random.nextInt(sum);
+			Configuration choice = null;
+			for (Configuration c : configs) {
+				if (configMap.containsKey(c)) {
+					config -= configMap.get(c);
+					config -= difficulty;
+				}
+				
+				if (config <= 0) {
+					choice = c;
+					break;
+				}
+			}
+			configTreeMap.put(at.x, choice);
+			at = choice.apply(at);
 		}
 
 		/*
@@ -362,6 +381,13 @@ public class MyLevel extends Level {
 	 * Configurations
 	 */
 
+	private static final int burnt = 512;
+	private static final int well = 256;
+	private static final int medium = 128;
+	private static final int mediumRare = 32;
+	private static final int rare = 8;
+	private static final int raw = 2;
+	
 	private Map<Configuration, Integer> getConfigurations() {
 		Map<Configuration, Integer> configurations = new HashMap<>();
 
@@ -376,7 +402,7 @@ public class MyLevel extends Level {
 				int w = random.nextInt(5) + 2;
 				return straight(at, w);
 			}
-		}, 1);
+		}, burnt);
 
 		configurations.put(new Configuration() {
 			@Override
@@ -387,9 +413,9 @@ public class MyLevel extends Level {
 			@Override
 			public Point apply(Point at) {
 				at = jump(at, 3, 0);
-				return straight(at, 2);
+				return straight(at, 4);
 			}
-		}, 1);
+		}, well);
 
 		configurations.put(new Configuration() {
 			@Override
@@ -405,9 +431,9 @@ public class MyLevel extends Level {
 				}
 
 				at = jump(at, 3, h);
-				return straight(at, 2);
+				return straight(at, 4);
 			}
-		}, 1);
+		}, well);
 
 		configurations.put(new Configuration() {
 			@Override
@@ -421,7 +447,7 @@ public class MyLevel extends Level {
 				enemy(at, Enemy.ENEMY_GOOMBA, false);
 				return straight(at, 2);
 			}
-		}, 1);
+		}, medium);
 
 		configurations.put(new Configuration() {
 			@Override
@@ -442,7 +468,7 @@ public class MyLevel extends Level {
 				}
 				return straight(at, 2);
 			}
-		}, 1);
+		}, well);
 		
 		configurations.put(new Configuration() {
 			@Override
@@ -457,7 +483,7 @@ public class MyLevel extends Level {
 				pipe(at, h, random.nextBoolean());
 				return straight(at, 3);
 			}
-		}, 1);
+		}, medium);
 		
 		
 		configurations.put(new Configuration() {
@@ -473,7 +499,7 @@ public class MyLevel extends Level {
 				cannon(at, h);
 				return straight(at, 2);
 			}
-		}, 1);
+		}, medium);
 		
 		configurations.put(new Configuration() {
 			@Override
@@ -501,7 +527,7 @@ public class MyLevel extends Level {
 				}
 				return straight(at, 2);
 			}
-		}, 1);
+		}, medium);
 		
 		configurations.put(new Configuration() {
 			@Override
@@ -516,7 +542,7 @@ public class MyLevel extends Level {
 				enemy(at, Enemy.ENEMY_SPIKY, true);
 				return at;
 			}
-		}, 1);
+		}, medium);
 		
 		configurations.put(new Configuration() {
 			@Override
@@ -526,15 +552,15 @@ public class MyLevel extends Level {
 			
 			@Override
 			public Point apply(Point at) {
-				at = jump(at, 4, 0);
+				at = jump(at, 3, 0);
 				enemy(at, Enemy.ENEMY_GREEN_KOOPA_FLYING, true);
-				at = jump(at, 4, 0);
+				at = jump(at, 3, 0);
 				enemy(at, Enemy.ENEMY_GREEN_KOOPA_FLYING, true);
 				at = jump(at, 3, 0);
 				at = straight(at, 2);
 				return at;
 			}
-		}, 1);
+		}, medium);
 		
 		configurations.put(new Configuration() {
 			@Override
@@ -544,7 +570,7 @@ public class MyLevel extends Level {
 
 			@Override
 			public Point apply(Point at) {
-				at = straight(at, 1);
+				at = straight(at, 2);
 				int h = random.nextInt(2) + 2;
 				cannon(at, h);
 				at = straight(at, 2);
@@ -554,10 +580,10 @@ public class MyLevel extends Level {
 				h++;
 				cannon(at, h);
 				at = straight(at, 2);
-				at = jump(at, 8, 0);
+				at = jump(at, 6, 0);
 				return at = straight(at, 2);
 			}
-		}, 1);
+		}, medium);
 		
 		configurations.put(new Configuration() {
 			@Override
@@ -567,7 +593,7 @@ public class MyLevel extends Level {
 			
 			@Override
 			public Point apply(Point at) {
-				at = jump(at, 3, 0);
+				at = jump(at, 2, 0);
 				int h = random.nextInt(3) + 1;
 				for (int i = 0; i < h; i++) {
 					block(at, h, BLOCK_EMPTY);
@@ -586,7 +612,7 @@ public class MyLevel extends Level {
 				at = straight(at, 2);
 				return at;
 			}
-		}, 1);
+		}, mediumRare);
 		
 		configurations.put(new Configuration() {
 			@Override
@@ -596,18 +622,15 @@ public class MyLevel extends Level {
 			
 			@Override
 			public Point apply(Point at) {
-				at = jump(at, 3, 0);
+				at = jump(at, 2, 0);
 				int h = random.nextInt(2) + 1;
 				for (int i = 0; i < h; i++) {
 					at = jump(at, 1, 0);
 					block(at, h, BLOCK_EMPTY);
 					at = jump(at, 1, 0);
 					block(at, h, BLOCK_EMPTY);
-				
-					if (i%3 == 0) {
-						enemy(new Point(at.x, at.y+h+1), Enemy.ENEMY_RED_KOOPA, false);
-					}
 				}
+				
 				at = jump(at, 2, 0);
 				h = random.nextInt(4);
 				for (int i = 0; i < h; i++) {
@@ -620,7 +643,7 @@ public class MyLevel extends Level {
 				at = straight(at, 3);
 				return at;
 			}
-		}, 1);
+		}, medium);
 		
 		configurations.put(new Configuration() {
 			@Override
@@ -630,7 +653,7 @@ public class MyLevel extends Level {
 			
 			@Override
 			public Point apply(Point at) {
-				int high = 4;
+				int high = 3;
 				int low = -1;
 				int l = 9;
 				at = straight(at, 3);
@@ -656,7 +679,7 @@ public class MyLevel extends Level {
 				at = straight(at, 2);
 				return at;
 			}
-		}, 1);
+		}, medium);
 		
 		configurations.put(new Configuration() {
 			@Override
@@ -666,7 +689,7 @@ public class MyLevel extends Level {
 			
 			@Override
 			public Point apply(Point at) {
-				int high = 4;
+				int high = 3;
 				int low = -1;
 				int l = 6;
 				at = straight(at, 3);
@@ -692,7 +715,7 @@ public class MyLevel extends Level {
 				at = straight(at, 2);
 				return at;
 			}
-		}, 1);
+		}, medium);
 		
 
 		return configurations;
