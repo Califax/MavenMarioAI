@@ -21,6 +21,8 @@ public class Configurations {
 		configs = new HashSet<>();
 		
 		// Register the configurations here
+//		configs.add(FloatingNarrowBlockwayWithGoomba());
+//		configs.add(FlyingTurtleJump());
 		configs.add(straight());
 		configs.add(jump());
 		configs.add(goomba());
@@ -280,6 +282,53 @@ public class Configurations {
 		};
 	}
 	
+	public static Configuration FloatingNarrowBlockwayWithGoomba() {
+		return new Configuration(id++) {
+		@Override
+		public Point apply(Point at, MyLevel level) {
+			int high = 4;
+			int low = -1;
+			int l = 5;
+			at = level.straight(at, 1);
+			level.cannon(at, 2);
+			at = level.straight(at, 1);
+			//level.block(at, high, level.BLOCK_EMPTY);
+			at = level.straight(at, 1);
+			for (int i = 0; i < l; i++) {
+				//level.block(at, high, level.BLOCK_COIN);
+				if (i%5 == 0) {
+					level.enemy(new Point(at.x, at.y), Enemy.ENEMY_GOOMBA, false);
+				}
+				level.block(at, low, level.BLOCK_EMPTY);
+				at = level.jump(at, 1, 0);
+			}
+			//level.block(at, high, level.BLOCK_EMPTY);
+			//at = level.straight(at, 1);
+			//level.block(at, high, level.BLOCK_EMPTY);
+			at = level.straight(at, 1);
+			//level.block(at, high, level.BLOCK_EMPTY);
+			level.cannon(at, 2);
+			at = level.straight(at, 2);
+			return at;
+		}
+	  };
+	}
+	
+	public static Configuration FlyingTurtleJump() {
+		return new Configuration(id++) {
+		
+		@Override
+		public Point apply(Point at, MyLevel level) {
+			at = level.jump(at, 2, 0);
+			level.enemy(at, Enemy.ENEMY_GREEN_KOOPA_FLYING, true);
+			at =  level.jump(at, 3, 0);
+			level.enemy(at, Enemy.ENEMY_GREEN_KOOPA_FLYING, true);
+			at =  level.jump(at, 2, 0);
+			at =  level.straight(at, 2);
+			return at;
+		}
+	  };
+	}	
 	
 	
 }
