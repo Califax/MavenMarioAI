@@ -1,15 +1,12 @@
 package dk.itu.mario.MarioInterface;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 public class GamePlay implements Serializable {
-		
 
 	private static final long serialVersionUID = 1L;
 	
@@ -84,8 +81,8 @@ public class GamePlay implements Serializable {
 			fis = new FileInputStream(fileName);
 			in = new ObjectInputStream(fis);
 			gp = (GamePlay)in.readObject();
+			in.close();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return gp;

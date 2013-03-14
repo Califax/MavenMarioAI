@@ -5,117 +5,110 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Random;
 import java.util.TreeMap;
 
+import maven.code.Configuration;
+import maven.code.Configurations;
 import dk.itu.mario.MarioInterface.GamePlay;
 import dk.itu.mario.MarioInterface.LevelInterface;
 import dk.itu.mario.engine.sprites.Enemy;
 import dk.itu.mario.engine.sprites.SpriteTemplate;
 
 public class MyLevel extends Level {
-	public static int BLOCKS_EMPTY = 0;
-	public static int BLOCKS_POWER = 0;
-	public static int BLOCKS_COINS = 0;
-	public static int COINS = 0;
-	public static int ENEMIES = 0;
-
+	
+	// Data for DataRecorder
+	public int BLOCKS_EMPTY = 0;
+	public int BLOCKS_COINS = 0;
+	public int BLOCKS_POWER = 0;
+	public int COINS = 0;
+	public int ENEMIES = 0;
+	
 	// Store information about the level
 	private Random random;
 	private int difficulty;
 	private int type;
+	
 	private GamePlay playerMetrics;
 	private int fastestPossibleTime = width / 10;
 	private int prevLevelCompTime;
 
-	// Configurations
-	private static Map<Configuration, Integer> configMap; // Only static vars for easy access in engine
+	// Static to persist over multiple levels
+	private static Map<Configuration, Integer> deathCount = new HashMap<>();
+	
 	private List<Configuration> configs;
-	public static TreeMap<Integer, Configuration> configTreeMap;
-	private static Map<Configuration, Integer> configFreqMap;
+	private TreeMap<Integer, Configuration> configTreeMap;
+
+	public MyLevel(int width, int height) {
+		this(width, height, 4731L, 0, LevelInterface.TYPE_OVERGROUND, new GamePlay());
+	}
+
+	public MyLevel(int width, int height, long seed, int difficulty, int type, GamePlay playerMetrics) {
+		super(width, height);
+		
+		this.playerMetrics = playerMetrics;
+		
+		// Hills don't play nicely with other types.
+		this.type = LevelInterface.TYPE_OVERGROUND;
+		
+		this.difficulty = difficulty;
+		this.random = new Random(seed);
+		this.configs = new ArrayList<>(Configurations.configs());
+		this.configTreeMap = new TreeMap<Integer, Configuration>();
+		this.prevLevelCompTime = playerMetrics.getCompletionTime();
+		
+		createLevel();
+	}
 
 	/**
 	 * Will take in the coordinate mario died at and find the configuration that the
 	 * x coordinate is within range of
-	 * @param key The x coordinate mario died at
+	 * 
+	 * @param x The x coordinate mario died at
 	 * @return
 	 */
-	public static Configuration configurationDeath(Integer key) {
-		Integer k = key > configTreeMap.firstKey() ? configTreeMap.floorKey(key) : configTreeMap.firstKey();
-	    if (k != null ) {
-	    	Configuration config = configTreeMap.get(k);
-	    	Integer freq = configFreqMap.get(k);
-	    	if (freq != null) {
-	    		configFreqMap.put(config, ++freq);
-	    	}
-	    	else {
-	    		configFreqMap.put(config, 1);
-	    	}
-	    	int oldDiff = configMap.get(config);
-	    	configMap.put(config, ++oldDiff); // Increase difficulty of config player died to
-	        return config;
-	    }
-	    else {
+	public Configuration death(int x) {
+	    Integer key = configTreeMap.floorKey(x);
+	    if (key == null) {
 	    	return null;
-	    } 
+	    } else {
+	    	Configuration c = configTreeMap.get(key);
+	    	if (!deathCount.containsKey(c)) {
+	    		deathCount.put(c, 0);
+	    	}
+	    	deathCount.put(c, deathCount.get(c) + 1);
+	    	return c;
+	    }
 	}
 	
-	public MyLevel(int width, int height) {
-		super(width, height);
-	}
-
-	public MyLevel(int width, int height, long seed, int difficulty, int type, GamePlay playerMetrics) {
-		this(width, height);
-		this.playerMetrics = playerMetrics;
-		init(seed, difficulty, type);
-		prevLevelCompTime = playerMetrics.getCompletionTime();
-		create();
-		//System.out.println(playerMetrics);
-		
-	}
-
-	public void init(long seed, int difficulty, int type) {
-		this.type = type;
-		this.difficulty = difficulty;
-		this.random = new Random(seed);
-		configMap = getConfigurations();
-		this.configs = new ArrayList<>(configMap.keySet());
-		configTreeMap = new TreeMap<Integer, Configuration>();
-		if (configFreqMap == null) {
-			configFreqMap = new HashMap<Configuration, Integer>();
-		}
-	}
-	
-	public void printFreqMap() {
-		for (Entry<Configuration, Integer> e: configFreqMap.entrySet()) {
-			System.out.print(e.getKey() + " : " + e.getValue() + " ");
-		}
-		System.out.println();
-	}
-	
-	public void create() {
-		// create the start location
+	public void createLevel() {
 		Point at = new Point(0, 2);
 
 		// width we want to leave safe at the end and beginning
 		int cushion = 15;
 
+		int sum = configs.size();
+		for (int deaths : deathCount.values()) {
+			sum += deaths;
+		}
+		
+		int limit = sum / 6;
+		for (Configuration c : deathCount.keySet()) {
+			if (deathCount.get(c) > limit) {
+				sum -= deathCount.get(c) + limit;
+				deathCount.put(c, limit);
+			}
+		}
+		
 		at = straight(at, cushion);
 		while(at.x < width - cushion) {
-			int sum = 0;
-			for (Configuration c : configs) {
-				if (configMap.containsKey(c)) {
-					sum += configMap.get(c);
-					sum += difficulty;
-				}
-			}
 			int config = random.nextInt(sum);
 			Configuration choice = null;
 			for (Configuration c : configs) {
-				if (configMap.containsKey(c)) {
-					config -= configMap.get(c);
-					config -= difficulty;
+				
+				config -= 1;
+				if (deathCount.containsKey(c)) {
+					config -= deathCount.get(c);
 				}
 				
 				if (config <= 0) {
@@ -123,13 +116,17 @@ public class MyLevel extends Level {
 					break;
 				}
 			}
+			
+			if (choice == null) continue;
+			
 			configTreeMap.put(at.x, choice);
-			at = choice.apply(at);
+			at = choice.apply(at, this);
 		}
 
 		/*
 		 * coordinates of the exit
 		 */
+		at = straight(at, width - at.x - 5);
 		xExit = at.x;
 		yExit = y(at.y - 1);
 		at = straight(at, width - at.x);
@@ -139,13 +136,54 @@ public class MyLevel extends Level {
 	/**
 	 * Build straight section at given point with specified length
 	 */
-	private Point straight(Point at, int l) {
+	public Point straight(Point at, int l) {
 		for (int i = 0; i < l; i++) {
 			for (int j = 0; j < at.y; j++) {
 				setBlock(at.x + i, y(j), GROUND);
 			}
 		}
 		at.x += l;
+		return at;
+	}
+	
+	/**
+	 * Builds a hill
+	 */
+	public Point hill(Point at, int w, int h) {
+		
+		if (at.y + h >= height) {
+			h = height - 1 - at.y;
+		}
+		
+		for (int i = 0; i < w; i++) {
+			for (int j = 0; j < h; j++) {
+				if (j < h - 1) {
+					if (i == 0) {
+						setBlock(at.x + i, y(at.y + j), HILL_LEFT);
+					} else if (i == w - 1) {
+						setBlock(at.x + i, y(at.y + j), HILL_RIGHT);
+					} else {
+						setBlock(at.x + i, y(at.y + j), HILL_FILL);
+					}
+				} else if (i == 0) {
+					if (getBlock(at.x + i, y(at.y + j)) == HILL_FILL) {
+						setBlock(at.x + i, y(at.y + j), HILL_TOP_LEFT_IN);
+					} else {
+						setBlock(at.x + i, y(at.y + j), HILL_TOP_LEFT);
+					}
+				} else if (i == w - 1) {
+					if (getBlock(at.x + i, y(at.y + j)) == HILL_FILL) {
+						setBlock(at.x + i, y(at.y + j), HILL_TOP_RIGHT_IN);
+					} else {
+						setBlock(at.x + i, y(at.y + j), HILL_TOP_RIGHT);
+					}
+				} else {
+					setBlock(at.x + i, y(at.y + j), HILL_TOP);
+				}
+			}
+		}
+		
+		at.x += w;
 		return at;
 	}
 
@@ -155,22 +193,12 @@ public class MyLevel extends Level {
 	 * @l the length of the jump
 	 * @h the height to increase or decrease by
 	 */
-	private Point jump(Point at, int l, int h) {
+	public Point jump(Point at, int l, int h) {
 		at.x += l;
 		at.y += h;
 		return at;
 	}
 	
-	private Point randomJump(Point at) {
-		int h = random.nextInt(7) - 3;
-		int l = random.nextInt(3) + 1;
-		while (at.y + h >= height || at.y + h <= 0) {
-			h = random.nextInt(7) - 3;
-		}
-		at = jump(at, l, h);
-		return at;
-	}
-
 	/**
 	 * Buids a pipe at the given point of the height, if flower is true there will be a flower enemy in the pipe
 	 * 
@@ -178,7 +206,7 @@ public class MyLevel extends Level {
 	 * @param h
 	 * @param flower
 	 */
-	private void pipe(Point at, int h, boolean flower) {
+	public void pipe(Point at, int h, boolean flower) {
 		for (int i = 0; i < h; i++) {
 			if (i == h - 1) {
 				setBlock(at.x, y(at.y + i), TUBE_TOP_LEFT);
@@ -197,7 +225,7 @@ public class MyLevel extends Level {
 	/**
 	 * Builds a cannon of the specified height at the point
 	 */
-	private void cannon(Point at, int h) {
+	public void cannon(Point at, int h) {
 		for (int i = 0; i < h; i++) {
 			if (i == h - 1) {
 				setBlock(at.x, y(at.y + i), CANNON_TOP);
@@ -216,7 +244,7 @@ public class MyLevel extends Level {
 	 * @param type
 	 * @param winged
 	 */
-	private void enemy(Point at, int type, boolean winged) {
+	public void enemy(Point at, int type, boolean winged) {
 		setSpriteTemplate(at.x, y(at.y), new SpriteTemplate(type, winged));
 	}
 
@@ -226,7 +254,7 @@ public class MyLevel extends Level {
 	 * @param h the height to place the block at
 	 * @param type
 	 */
-	private void block(Point at, int h, byte type) {
+	public void block(Point at, int h, byte type) {
 		setBlock(at.x, y(at.y+h), type);
 	}
 
@@ -237,7 +265,7 @@ public class MyLevel extends Level {
 	 * @param h
 	 * @return
 	 */
-	private int y(int h) {
+	public int y(int h) {
 		return height - 1 - h;
 	}
 
@@ -358,10 +386,23 @@ public class MyLevel extends Level {
 	}
 
 	public MyLevel clone() throws CloneNotSupportedException {
-		//	//System.out.println("Called clone");
-		//System.out.println(playerMetrics);
 		MyLevel clone = new MyLevel(width, height);
 
+		clone.BLOCKS_COINS = BLOCKS_COINS;
+		clone.BLOCKS_EMPTY = BLOCKS_EMPTY;
+		clone.BLOCKS_POWER = BLOCKS_POWER;
+		clone.COINS = COINS;
+		clone.ENEMIES = ENEMIES;
+		
+		clone.configs = configs;
+		clone.configTreeMap = configTreeMap;
+		clone.difficulty = difficulty;
+		clone.fastestPossibleTime = fastestPossibleTime;
+		clone.playerMetrics = playerMetrics;
+		clone.prevLevelCompTime = prevLevelCompTime;
+		clone.random = random;
+		clone.type = type;
+		
 		clone.xExit = xExit;
 		clone.yExit = yExit;
 		byte[][] map = getMap();
@@ -374,161 +415,16 @@ public class MyLevel extends Level {
 			}
 		}
 		return clone;
-
 	}
 
 	/*
 	 * Configurations
 	 */
 
-	private static final int burnt = 512;
-	private static final int well = 256;
-	private static final int medium = 128;
-	private static final int mediumRare = 32;
-	private static final int rare = 8;
-	private static final int raw = 2;
-	
+	/*
 	private Map<Configuration, Integer> getConfigurations() {
 		Map<Configuration, Integer> configurations = new HashMap<>();
 
-		configurations.put(new Configuration() {
-			@Override
-			public String id() {
-				return "straight";
-			}
-
-			@Override
-			public Point apply(Point at) {
-				int w = random.nextInt(5) + 2;
-				return straight(at, w);
-			}
-		}, burnt);
-
-		configurations.put(new Configuration() {
-			@Override
-			public String id() {
-				return "gap";
-			}
-
-			@Override
-			public Point apply(Point at) {
-				at = jump(at, 3, 0);
-				return straight(at, 4);
-			}
-		}, well);
-
-		configurations.put(new Configuration() {
-			@Override
-			public String id() {
-				return "jump";
-			}
-
-			@Override
-			public Point apply(Point at) {
-				int h = random.nextInt(7) - 3;
-				while (at.y + h >= height || at.y + h <= 0) {
-					h = random.nextInt(7) - 3;
-				}
-
-				at = jump(at, 3, h);
-				return straight(at, 4);
-			}
-		}, well);
-
-		configurations.put(new Configuration() {
-			@Override
-			public String id() {
-				return "goomba";
-			}
-
-			@Override
-			public Point apply(Point at) {
-				at = straight(at, 2);
-				enemy(at, Enemy.ENEMY_GOOMBA, false);
-				return straight(at, 2);
-			}
-		}, medium);
-
-		configurations.put(new Configuration() {
-			@Override
-			public String id() {
-				return "coins";
-			}
-
-			@Override
-			public Point apply(Point at) {
-				at = straight(at, 1);
-				int w = random.nextInt(6) + 1;
-				int h = random.nextInt(2) + 2;
-				if (at.y + h < height) {
-					for (int i = 0; i < w; i++) {
-						block(at, h, BLOCK_COIN);
-						at = straight(at, 1);
-					}
-				}
-				return straight(at, 2);
-			}
-		}, well);
-		
-		configurations.put(new Configuration() {
-			@Override
-			public String id() {
-				return "random pipe";
-			}
-
-			@Override
-			public Point apply(Point at) {
-				at = straight(at, 1);
-				int h = random.nextInt(2) + 2;
-				pipe(at, h, random.nextBoolean());
-				return straight(at, 3);
-			}
-		}, medium);
-		
-		
-		configurations.put(new Configuration() {
-			@Override
-			public String id() {
-				return "cannon";
-			}
-
-			@Override
-			public Point apply(Point at) {
-				at = straight(at, 1);
-				int h = random.nextInt(2) + 2;
-				cannon(at, h);
-				return straight(at, 2);
-			}
-		}, medium);
-		
-		configurations.put(new Configuration() {
-			@Override
-			public String id() {
-				return "random blocks";
-			}
-
-			@Override
-			public Point apply(Point at) {
-				at = straight(at, 1);
-				int w = random.nextInt(6) + 1;
-				int h = random.nextInt(2) + 2;
-				if (at.y + h < height) {
-					for (int i = 0; i < w; i++) {
-						int r = random.nextInt(10);
-						if (r < 7) {
-							block(at, h, BLOCK_COIN);
-						} else if (r < 9) {
-							block(at, h, BLOCK_EMPTY);
-						} else {
-							block(at, h, BLOCK_POWERUP);
-						}
-						at = straight(at, 1);
-					}
-				}
-				return straight(at, 2);
-			}
-		}, medium);
-		
 		configurations.put(new Configuration() {
 			@Override
 			public String id() {
@@ -688,7 +584,7 @@ public class MyLevel extends Level {
 			}
 			
 			@Override
-			public Point apply(Point at) {
+			public Point apply(Point at, MyLevel level) {
 				int high = 3;
 				int low = -1;
 				int l = 6;
@@ -720,25 +616,6 @@ public class MyLevel extends Level {
 
 		return configurations;
 	}
+	*/
 
-	private abstract class Configuration {
-
-		abstract String id();
-		abstract Point apply(Point at);
-
-		@Override
-		public int hashCode() {
-			return id().hashCode();
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			return id().equals(obj);
-		}
-
-		@Override
-		public String toString() {
-			return id();
-		}
-	}
 }
