@@ -102,7 +102,7 @@ public class MyLevel extends Level {
 		
 		at = straight(at, cushion);
 		while(at.x < width - cushion) {
-			int config = random.nextInt(sum);
+			int config = random.nextInt(sum + 1);
 			Configuration choice = null;
 			for (Configuration c : configs) {
 				
@@ -144,6 +144,23 @@ public class MyLevel extends Level {
 		}
 		at.x += l;
 		return at;
+	}
+	
+	/*
+	 * Builds a ceiling
+	 */
+	public Point ceiling(Point at, int l) {
+		for (int i = 0; i < l; i++) {
+			for (int j = at.y; j < height; j++) {
+				setBlock(at.x + i, y(j), GROUND);
+			}
+		}
+		at.x += l;
+		return at;
+	}
+	
+	public void coin(Point at) {
+		setBlock(at.x, y(at.y), COIN);
 	}
 	
 	/**

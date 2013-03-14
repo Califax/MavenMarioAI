@@ -22,14 +22,16 @@ public class Configurations {
 		
 		// Register the configurations here
 		configs.add(straight());
-		configs.add(jump());
+//		configs.add(jump());
 		configs.add(goomba());
+		configs.add(hill());
 		configs.add(hills());
 		configs.add(elevation());
 		configs.add(coins());
 		configs.add(blocks());
-		configs.add(pipe(true));
-		configs.add(pipe(false));
+		configs.add(cave());
+//		configs.add(pipe(true));
+//		configs.add(pipe(false));
 		configs.add(cannon());
 	}
 
@@ -55,6 +57,36 @@ public class Configurations {
 
 	public static Set<Configuration> configs() {
 		return instance().configs;
+	}
+	
+	public static Configuration cave() {
+		return new Configuration(id++) {
+			
+			@Override
+			public Point apply(Point at, MyLevel level) {
+				at = level.straight(at, 2);
+				int h = random.nextInt(5) + 3;
+				if (at.y + h < level.getHeight()) {
+					int w = random.nextInt(5) + 8;
+					at.y += h;
+					level.ceiling(at, w);
+					at.y -= h;
+					at.x -= w;
+
+					at.y += 1;
+					for (int i = 0; i < w / 2; i++) {
+						level.coin(at);
+						at.x += 2;
+					}
+					at.x -= (w / 2) * 2;
+					at.y -= 1;
+					
+					level.straight(at, w);
+				}
+				
+				return level.straight(at, 3);
+			}
+		};
 	}
 	
 	public static Configuration straight() {
@@ -96,8 +128,15 @@ public class Configurations {
 		return new Configuration(id++) {
 			@Override
 			public Point apply(Point at, MyLevel level) {
-				// TODO Auto-generated method stub
-				return at;
+				int h = random.nextInt(2) + 3;
+				int w = random.nextInt(5) + 5;
+				
+				at.x++;
+				level.hill(at, w, h);
+				at.x -= w;
+				at.x--;
+				
+				return level.straight(at, w + 2);
 			}
 		};
 	}
