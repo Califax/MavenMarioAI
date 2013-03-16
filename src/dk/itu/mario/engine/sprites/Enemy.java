@@ -461,4 +461,9 @@ public class Enemy extends Sprite
             }
         }
     }
+
+	public static int randomEnemy() {
+		int[] enemies = new int[] {ENEMY_GOOMBA, ENEMY_GREEN_KOOPA, ENEMY_RED_KOOPA, ENEMY_SPIKY};
+		return enemies[new Random().nextInt(enemies.length)];
+	}
 }

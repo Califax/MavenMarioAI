@@ -21,9 +21,11 @@ public class Configurations {
 		configs = new HashSet<>();
 
 		// Register the configurations here
-		configs.add(floatingNarrowBlockwayWithGoomba());
-		configs.add(flyingTurtleJump());
+		configs.add(powerUp());
+		configs.add(spikeyFloor());
 		configs.add(straight());
+		configs.add(blockway());
+		configs.add(flyingTurtleJump());
 		configs.add(jump());
 		configs.add(goomba());
 		configs.add(hill());
@@ -322,34 +324,26 @@ public class Configurations {
 		};
 	}
 
-	public static Configuration floatingNarrowBlockwayWithGoomba() {
+	public static Configuration blockway() {
 		return new Configuration(id++) {
 			@Override
 			public Point apply(Point at, MyLevel level) {
-				int high = 4;
-				int low = -1;
-				int l = 5;
 				at = level.straight(at, 1);
-				level.cannon(at, 2);
-				at = level.straight(at, 1);
-				//level.block(at, high, level.BLOCK_EMPTY);
-				at = level.straight(at, 1);
-				for (int i = 0; i < l; i++) {
-					//level.block(at, high, level.BLOCK_COIN);
-					if (i%5 == 0) {
-						level.enemy(new Point(at.x, at.y), Enemy.ENEMY_GOOMBA, false);
-					}
-					level.block(at, low, level.BLOCK_EMPTY);
-					at = level.jump(at, 1, 0);
-				}
-				//level.block(at, high, level.BLOCK_EMPTY);
-				//at = level.straight(at, 1);
-				//level.block(at, high, level.BLOCK_EMPTY);
-				at = level.straight(at, 1);
-				//level.block(at, high, level.BLOCK_EMPTY);
 				level.cannon(at, 2);
 				at = level.straight(at, 2);
-				return at;
+
+				for (int i = 0; i < 5; i++) {
+					if (i == 0) {
+						level.enemy(new Point(at.x, at.y), Enemy.randomEnemy(), false);
+					}
+					
+					level.block(at, -1, Level.ROCK);
+					at = level.jump(at, 1, 0);
+				}
+
+				at = level.straight(at, 1);
+				level.cannon(at, 2);
+				return level.straight(at, 2);
 			}
 		};
 	}
@@ -386,5 +380,46 @@ public class Configurations {
 		};
 	}	
 
+	public static Configuration spikeyFloor() {
+		return new Configuration(id++) {
+			@Override
+			public Point apply(Point at, MyLevel level) {
+				level.block(at, 0, Level.ROCK);
+				at = level.straight(at, 3);
+				for (int i = 0; i < 8; i++) {
+					at = level.straight(at, 1);
+					if (i == 0) {
+						level.enemy(at, Enemy.ENEMY_RED_KOOPA, false);
+					} else if (i > 2){
+						level.enemy(at, Enemy.ENEMY_SPIKY, false);
+					}
+				}
+				return level.straight(at, 1);
+			}
+		};
+	}
+	
+	public static Configuration powerUp() {
+		return new Configuration(id++) {
+			@Override
+			public Point apply(Point at, MyLevel level) {
+				int h = 3;
+				at.y += h;
+				at = level.ceiling(at, 2);
+				at.y -= h;
+				at.x -= 2;
+				at = level.straight(at, 4);
+				at.y += h;
+				at = level.island(at, 2, level.getHeight() - at.y - 3);
+				at.y -= h;
+				at.x -= 2;
+				
+				level.block(at, level.getHeight() - at.y - 1, Level.BLOCK_POWERUP);
+				
+				return level.straight(at, 4);
+			}
+		};
+	}
+	
 }
 

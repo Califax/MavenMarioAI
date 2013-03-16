@@ -30,7 +30,6 @@ public class MyLevel extends Level {
 	private int type;
 	
 	private GamePlay playerMetrics;
-	private int fastestPossibleTime = width / 10;
 	private int prevLevelCompTime;
 
 	// Static to persist over multiple levels
@@ -51,11 +50,10 @@ public class MyLevel extends Level {
 		// Hills don't play nicely with other types.
 		this.type = LevelInterface.TYPE_OVERGROUND;
 		
-		this.difficulty = difficulty;
 		this.random = new Random(seed);
 		this.configs = new ArrayList<>(Configurations.configs());
 		this.configTreeMap = new TreeMap<Integer, Configuration>();
-		this.prevLevelCompTime = playerMetrics.getCompletionTime();
+		this.difficulty = Math.max(0, playerMetrics.getCompletionTime() - 16); 
 		
 		createLevel();
 	}
@@ -82,12 +80,15 @@ public class MyLevel extends Level {
 	}
 	
 	public void createLevel() {
+		System.out.println("Difficulty: " + difficulty);
+		
 		Point at = new Point(0, 2);
 
 		// width we want to leave safe at the end and beginning
 		int cushion = 15;
 
 		int sum = configs.size();
+		sum += configs.size() * difficulty;
 		for (int deaths : deathCount.values()) {
 			sum += deaths;
 		}
@@ -107,6 +108,7 @@ public class MyLevel extends Level {
 			for (Configuration c : configs) {
 				
 				config -= 1;
+				config -= difficulty;
 				if (deathCount.containsKey(c)) {
 					config -= deathCount.get(c);
 				}
@@ -156,6 +158,16 @@ public class MyLevel extends Level {
 			}
 		}
 		at.x += l;
+		return at;
+	}
+	
+	public Point island(Point at, int w, int h) {
+		for (int i = 0; i < w; i++) {
+			for (int j = at.y; j < at.y + h; j++) {
+				setBlock(at.x + i, y(j), GROUND);
+			}
+		}
+		at.x += w;
 		return at;
 	}
 	
@@ -403,7 +415,8 @@ public class MyLevel extends Level {
 	}
 
 	public MyLevel clone() throws CloneNotSupportedException {
-		MyLevel clone = new MyLevel(width, height);
+		MyLevel clone = new MyLevel(width, height, 
+				(long) Math.random() * Long.MAX_VALUE, difficulty, type, playerMetrics);
 
 		clone.BLOCKS_COINS = BLOCKS_COINS;
 		clone.BLOCKS_EMPTY = BLOCKS_EMPTY;
@@ -414,7 +427,6 @@ public class MyLevel extends Level {
 		clone.configs = configs;
 		clone.configTreeMap = configTreeMap;
 		clone.difficulty = difficulty;
-		clone.fastestPossibleTime = fastestPossibleTime;
 		clone.playerMetrics = playerMetrics;
 		clone.prevLevelCompTime = prevLevelCompTime;
 		clone.random = random;
@@ -442,39 +454,6 @@ public class MyLevel extends Level {
 	private Map<Configuration, Integer> getConfigurations() {
 		Map<Configuration, Integer> configurations = new HashMap<>();
 
-		configurations.put(new Configuration() {
-			@Override
-			public String id() {
-				return "JumpThenSpiky";
-			}
-			
-			@Override
-			public Point apply(Point at) {
-				at = randomJump(at);
-				at = straight(at, 3);
-				enemy(at, Enemy.ENEMY_SPIKY, true);
-				return at;
-			}
-		}, medium);
-		
-		configurations.put(new Configuration() {
-			@Override
-			public String id() {
-				return "JumpWithTurtles";
-			}
-			
-			@Override
-			public Point apply(Point at) {
-				at = jump(at, 3, 0);
-				enemy(at, Enemy.ENEMY_GREEN_KOOPA_FLYING, true);
-				at = jump(at, 3, 0);
-				enemy(at, Enemy.ENEMY_GREEN_KOOPA_FLYING, true);
-				at = jump(at, 3, 0);
-				at = straight(at, 2);
-				return at;
-			}
-		}, medium);
-		
 		configurations.put(new Configuration() {
 			@Override
 			public String id() {
