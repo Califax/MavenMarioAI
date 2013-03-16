@@ -21,7 +21,7 @@ public class Configurations {
 		configs = new HashSet<>();
 
 		// Register the configurations here
-		configs.add(powerUp());
+//		configs.add(powerUp());
 		configs.add(spikeyFloor());
 		configs.add(straight());
 		configs.add(blockway());
